@@ -1,9 +1,10 @@
+import os
 import streamlit as st
 import pandas as pd
 import requests
 
-# Base URL of the Flask backend
-BACKEND_URL = "http://backend:7860"
+# Base URL of the Flask backend (configurable via env)
+BACKEND_URL = os.environ.get("BACKEND_URL", "http://backend:7860")
 
 # Page title
 st.title("Telecom Customer Churn Prediction App")
@@ -90,7 +91,8 @@ if st.button("Predict", type="primary"):
     if response.status_code == 200:
         result = response.json()
 
-        if result["Prediction"] == "Churn":
+        pred = result.get("Prediction", "")
+        if isinstance(pred, str) and "churn" in pred.lower():
             st.error("⚠️ The customer is likely to churn.")
         else:
             st.success("✅ The customer is unlikely to churn.")

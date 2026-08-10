@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    image: churn-backend:latest
+    container_name: churn-backend
+    ports:
+      - "7860:7860"
+    networks:
+      - churn-net
+
+  frontend:
+    build: ./frontend
+    image: churn-frontend:latest
+    container_name: churn-frontend
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:7860
+    depends_on:
+      - backend
+    networks:
+      - churn-net
+
+networks:
+  churn-net:
+    driver: bridge
